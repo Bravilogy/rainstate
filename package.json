@@ -41,5 +41,14 @@
     "cross-env": "^5.2.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"
-  }
+  },
+  "npmName": "goosebump",
+  "npmFileMap": [
+    {
+      "basePath": "/dist/",
+      "files": [
+        "*.js"
+      ]
+    }
+  ]
 }
