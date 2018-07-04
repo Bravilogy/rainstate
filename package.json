@@ -1,6 +1,6 @@
 {
   "name": "goosebump",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Re-frame way of handling effects in React apps",
   "main": "./dist/index.js",
   "repository": "github:bravilogy/goosebump",
