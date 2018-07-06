@@ -5,6 +5,11 @@ In my opinion, `Re-frame` is an amazing piece of software and I think JavaScript
 
 Rainstate is a tiny library for managing side effects in JavaScript applications. It follows the pub-sub architecture like `Redux`, but with the additional effects layer like `Re-frame`.
 
+## Install
+```js
+yarn add https://github.com/Bravilogy/rainstate.git
+```
+
 ## Effects
 Effects determine what will happen when a specific event is dispatched. For example, an effect can be `state update`, `http call` or any other side effect, that will take place in application.
 
