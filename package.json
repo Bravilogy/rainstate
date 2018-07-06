@@ -1,6 +1,6 @@
 {
   "name": "rainstate",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Re-frame way of handling effects in React apps",
   "main": "./dist/index.js",
   "repository": "github:bravilogy/rainstate",
