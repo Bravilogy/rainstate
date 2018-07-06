@@ -1,6 +1,4 @@
-const events = {};
-const effects = {};
-const subscriptions = [];
+const { isArray } = Array;
 
 const makeStateManager = () => {
   let state;
@@ -13,31 +11,53 @@ const makeStateManager = () => {
   };
 };
 
-const stateManager = makeStateManager();
-
 const validateString = thing => {
   if (typeof thing !== 'string') {
     throw new Error(`Expected string and got ${thing}`);
   }
 };
 
+const events = {};
+const effects = {};
+const subscriptions = [];
+
+const stateManager = makeStateManager();
+
 export const registerEvent = (type, handler) => {
   validateString(type);
 
   if (events[type]) {
-    console.warn(`An event called ${type} has already been registered.`);
-    return;
+    console.warn(`An event '${type}' has already been registered, overwriting.`);
   }
 
   events[type] = handler;
 };
 
+export const registerStateEvent = (type, handler) => {
+  const handlerWrapper = (...params) => {
+    return {
+      state: handler(...params)
+    };
+  };
+
+  registerEvent(type, handlerWrapper);
+};
+
+export const registerEvents = eventsMap => {
+  Object.keys(eventsMap).forEach(event => {
+    const eventHandler = eventsMap[event];
+
+    if (typeof eventHandler === 'function') {
+      registerEvent(event, eventHandler);
+    }
+  });
+};
+
 export const registerEffect = (type, handler) => {
   validateString(type);
 
-  if (effects[type]) {
-    console.warn(`An effect called ${type} has already been registered.`);
-    return;
+  if (type === 'state' && effects[type]) {
+    throw new Error(`Cannot override the default 'state' effect.`);
   }
 
   effects[type] = handler;
@@ -77,27 +97,66 @@ export const subscribe = (handler) => {
 export const getState = stateManager.getState;
 
 
-/* register a few default effects */
-registerEffect('state', newValue => stateManager.update(newValue));
+/* Handle string and array events */
+const dispatchEffect = event => {
+  if (isArray(event)) {
+    return dispatch(...event);
+  }
 
+  return dispatch(event);
+};
+
+/* Parse onSuccess and onFailure handlers */
 const parseHandler = evt => {
+  if (!event) return [];
+
   if (typeof evt === 'string') {
     return [evt];
   }
 
-  if (!Array.isArray(evt)) {
+  if (!isArray(evt)) {
     throw new Error('onSuccess and onFailure can only be either strings or arrays.');
   }
 
   return evt;
 };
 
+
+/* ------------------------------
+   Register a few default effects
+
+   1. state     - an effect to update the state
+   2. dispatch  - an effect to dispatch another event from an event
+   3. dispatchN - an effect to dispatch multiple events from an event.
+                  It will filter and remove any falsey values. This allows
+                  the user to pass conditional events list.
+                  i.e. [['getUser', 1], null, 'getTasks']
+   4. http      - an effect to make http calls. By default it will use fetch api
+                  but it can be overwritten by registerring another http effect.
+                  This effect accepts a default fetch request object with a few additional
+                  properties - onFailure, onSuccess, uri. These properties will be used by
+                  the effect itself and the rest will be passed down to browser's fetch.
+
+                  The method will default to get request.
+   ------------------------------ */
+registerEffect('state', newValue => stateManager.update(newValue));
+
+registerEffect('dispatch', dispatchEffect);
+
+registerEffect('dispatchN', events => {
+  if (!isArray(events)) {
+    throw new Error('dispatchN expects an array of events, where each event is either a String or an Array');
+  }
+
+  events.filter(x => !!x).forEach(dispatchEffect);
+});
+
 registerEffect('http', config => {
   const {
-    uri,
-    method,
-    onSuccess,
+    method = 'get',
     onFailure,
+    onSuccess,
+    uri,
     ...requestObj,
   } = config;
 
@@ -116,6 +175,8 @@ registerEffect('http', config => {
 
   fetch(uri, { method, ...requestObj })
     .then(res => res.json())
-    .then(response => dispatch(successEvent, ...successParams, response))
-    .catch(err => dispatch(failureEvent, ...failureParams, err));
+    .then(response =>
+      successEvent ? dispatch(successEvent, ...successParams, response) : response)
+    .catch(err =>
+      failureEvent ? dispatch(failureEvent, ...failureParams, err) : err);
 });

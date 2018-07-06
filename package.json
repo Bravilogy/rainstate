@@ -1,9 +1,9 @@
 {
-  "name": "goosebump",
+  "name": "rainstate",
   "version": "0.0.3",
   "description": "Re-frame way of handling effects in React apps",
   "main": "./dist/index.js",
-  "repository": "github:bravilogy/goosebump",
+  "repository": "github:bravilogy/rainstate",
   "author": "Gega Nizharadze",
   "license": "MIT",
   "scripts": {
@@ -42,7 +42,7 @@
     "react": "^16.4.1",
     "react-dom": "^16.4.1"
   },
-  "npmName": "goosebump",
+  "npmName": "rainstate",
   "npmFileMap": [
     {
       "basePath": "/dist/",

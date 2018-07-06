@@ -2,9 +2,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
-var events = {};
-var effects = {};
-var subscriptions = [];
+var isArray = Array.isArray;
+
 
 var makeStateManager = function makeStateManager() {
   var state = void 0;
@@ -19,31 +18,53 @@ var makeStateManager = function makeStateManager() {
   };
 };
 
-var stateManager = makeStateManager();
-
 var validateString = function validateString(thing) {
   if (typeof thing !== 'string') {
     throw new Error('Expected string and got ' + thing);
   }
 };
 
+var events = {};
+var effects = {};
+var subscriptions = [];
+
+var stateManager = makeStateManager();
+
 export var registerEvent = function registerEvent(type, handler) {
   validateString(type);
 
   if (events[type]) {
-    console.warn('An event called ' + type + ' has already been registered.');
-    return;
+    console.warn('An event \'' + type + '\' has already been registered, overwriting.');
   }
 
   events[type] = handler;
 };
 
+export var registerStateEvent = function registerStateEvent(type, handler) {
+  var handlerWrapper = function handlerWrapper() {
+    return {
+      state: handler.apply(undefined, arguments)
+    };
+  };
+
+  registerEvent(type, handlerWrapper);
+};
+
+export var registerEvents = function registerEvents(eventsMap) {
+  Object.keys(eventsMap).forEach(function (event) {
+    var eventHandler = eventsMap[event];
+
+    if (typeof eventHandler === 'function') {
+      registerEvent(event, eventHandler);
+    }
+  });
+};
+
 export var registerEffect = function registerEffect(type, handler) {
   validateString(type);
 
-  if (effects[type]) {
-    console.warn('An effect called ' + type + ' has already been registered.');
-    return;
+  if (type === 'state' && effects[type]) {
+    throw new Error('Cannot override the default \'state\' effect.');
   }
 
   effects[type] = handler;
@@ -88,29 +109,70 @@ export var subscribe = function subscribe(handler) {
 
 export var getState = stateManager.getState;
 
-/* register a few default effects */
-registerEffect('state', function (newValue) {
-  return stateManager.update(newValue);
-});
+/* Handle string and array events */
+var dispatchEffect = function dispatchEffect(event) {
+  if (isArray(event)) {
+    return dispatch.apply(undefined, event);
+  }
 
+  return dispatch(event);
+};
+
+/* Parse onSuccess and onFailure handlers */
 var parseHandler = function parseHandler(evt) {
+  if (!event) return [];
+
   if (typeof evt === 'string') {
     return [evt];
   }
 
-  if (!Array.isArray(evt)) {
+  if (!isArray(evt)) {
     throw new Error('onSuccess and onFailure can only be either strings or arrays.');
   }
 
   return evt;
 };
 
+/* ------------------------------
+   Register a few default effects
+
+   1. state     - an effect to update the state
+   2. dispatch  - an effect to dispatch another event from an event
+   3. dispatchN - an effect to dispatch multiple events from an event.
+                  It will filter and remove any falsey values. This allows
+                  the user to pass conditional events list.
+                  i.e. [['getUser', 1], null, 'getTasks']
+   4. http      - an effect to make http calls. By default it will use fetch api
+                  but it can be overwritten by registerring another http effect.
+                  This effect accepts a default fetch request object with a few additional
+                  properties - onFailure, onSuccess, uri. These properties will be used by
+                  the effect itself and the rest will be passed down to browser's fetch.
+
+                  The method will default to get request.
+   ------------------------------ */
+registerEffect('state', function (newValue) {
+  return stateManager.update(newValue);
+});
+
+registerEffect('dispatch', dispatchEffect);
+
+registerEffect('dispatchN', function (events) {
+  if (!isArray(events)) {
+    throw new Error('dispatchN expects an array of events, where each event is either a String or an Array');
+  }
+
+  events.filter(function (x) {
+    return !!x;
+  }).forEach(dispatchEffect);
+});
+
 registerEffect('http', function (config) {
-  var uri = config.uri,
-      method = config.method,
-      onSuccess = config.onSuccess,
+  var _config$method = config.method,
+      method = _config$method === undefined ? 'get' : _config$method,
       onFailure = config.onFailure,
-      requestObj = _objectWithoutProperties(config, ['uri', 'method', 'onSuccess', 'onFailure']);
+      onSuccess = config.onSuccess,
+      uri = config.uri,
+      requestObj = _objectWithoutProperties(config, ['method', 'onFailure', 'onSuccess', 'uri']);
 
   var allowedMethods = ['get', 'post', 'delete', 'put', 'patch'];
 
@@ -133,8 +195,8 @@ registerEffect('http', function (config) {
   fetch(uri, _extends({ method: method }, requestObj)).then(function (res) {
     return res.json();
   }).then(function (response) {
-    return dispatch.apply(undefined, [successEvent].concat(successParams, [response]));
+    return successEvent ? dispatch.apply(undefined, [successEvent].concat(successParams, [response])) : response;
   }).catch(function (err) {
-    return dispatch.apply(undefined, [failureEvent].concat(failureParams, [err]));
+    return failureEvent ? dispatch.apply(undefined, [failureEvent].concat(failureParams, [err])) : err;
   });
 });

@@ -10,26 +10,18 @@ import React, { Component } from 'react';
 import { getState, dispatch, subscribe } from './store';
 
 export var connect = function connect(generateProps) {
-  return function (WrappedComponent) {
+  return function (Wrapped) {
     var Connected = function (_Component) {
       _inherits(Connected, _Component);
 
       function Connected() {
-        var _temp, _this, _ret;
-
         _classCallCheck(this, Connected);
 
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.handleChange = function () {
-          _this.forceUpdate();
-        }, _temp), _possibleConstructorReturn(_this, _ret);
+        return _possibleConstructorReturn(this, _Component.apply(this, arguments));
       }
 
       Connected.prototype.componentDidMount = function componentDidMount() {
-        this.unsubscribe = subscribe(this.handleChange);
+        this.unsubscribe = subscribe(this.forceUpdate);
       };
 
       Connected.prototype.componentWillUnmount = function componentWillUnmount() {
@@ -39,7 +31,7 @@ export var connect = function connect(generateProps) {
       Connected.prototype.render = function render() {
         var stateProps = generateProps ? generateProps(getState() || {}, dispatch) : {};
 
-        return React.createElement(WrappedComponent, _extends({}, this.props, stateProps));
+        return React.createElement(Wrapped, _extends({}, this.props, stateProps));
       };
 
       return Connected;

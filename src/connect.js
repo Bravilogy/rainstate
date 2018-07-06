@@ -2,26 +2,20 @@ import React, { Component } from 'react';
 import { getState, dispatch, subscribe } from './store';
 
 export const connect = (generateProps) => {
-  return WrappedComponent => {
+  return Wrapped => {
     class Connected extends Component {
       componentDidMount() {
-        this.unsubscribe = subscribe(this.handleChange);
+        this.unsubscribe = subscribe(this.forceUpdate);
       };
 
       componentWillUnmount() {
         this.unsubscribe();
       }
 
-      handleChange = () => {
-        this.forceUpdate();
-      };
-
       render() {
-        let stateProps = generateProps ? generateProps(getState() || {}, dispatch) : {};
+        const stateProps = generateProps ? generateProps(getState() || {}, dispatch) : {};
 
-        return (
-          <WrappedComponent {...this.props} {...stateProps} />
-        );
+        return <Wrapped {...this.props} {...stateProps} />;
       }
     }
 

@@ -1,2 +1,10 @@
 export { connect } from './connect';
-export { subscribe, dispatch, registerEffect, registerEvent } from './store';
+export {
+  dispatch,
+  getState,
+  registerEffect,
+  registerEvent,
+  registerEvents,
+  registerStateEvent,
+  subscribe,
+} from './store';
