@@ -1,11 +1,14 @@
 # Rainstate
+Having worked on multiple `Clojure` applications using `reagent + re-frame` combination, I decided to create this tiny library to 'feel at home' when working on JavaScript applications.
 
-Having worked on multiple `ClojureScript` applications using `reagent + re-frame` combination, I decided to create this tiny library to 'feel at home' when working on JavaScript applications.
+In my opinion, `Re-frame` is an amazing piece of software and I think JavaScript developers can learn a lot from it.
 
-Rainstate is a tiny library for managing side effects in JavaScript applications. It follows the pub-sub architecture like `Redux`, but will the additional effects layer like `Re-frame`.
+Rainstate is a tiny library for managing side effects in JavaScript applications. It follows the pub-sub architecture like `Redux`, but with the additional effects layer like `Re-frame`.
 
+## Effects
 Effects determine what will happen when a specific event is dispatched. For example, an effect can be `state update`, `http call` or any other side effect, that will take place in application.
 
+## Events
 Events are like actions in `Redux`, but their handlers return simple objects that represent effects mentioned above. You may register as many effects and events as you need. There are 3 different functions to register events in `rainstate` - `registerEvent`, `registerEvents` and `registerStateEvent`.
 
 Because event handlers return simple objects, they are pure functions that receive current state (and any other arguments passed during `dispatch`) and return simple objects.
