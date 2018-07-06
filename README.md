@@ -186,6 +186,8 @@ registerStateEvent('showMessage', (state) => ({
   message: 'hello world',
 }));
 
+// somewhere in your entry file import the file above
+import './store';
 
 // App.js
 import { connect } from 'rainstate';
