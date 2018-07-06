@@ -15,13 +15,21 @@ export var connect = function connect(generateProps) {
       _inherits(Connected, _Component);
 
       function Connected() {
+        var _temp, _this, _ret;
+
         _classCallCheck(this, Connected);
 
-        return _possibleConstructorReturn(this, _Component.apply(this, arguments));
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.handleUpdate = function () {
+          _this.forceUpdate();
+        }, _temp), _possibleConstructorReturn(_this, _ret);
       }
 
       Connected.prototype.componentDidMount = function componentDidMount() {
-        this.unsubscribe = subscribe(this.forceUpdate);
+        this.unsubscribe = subscribe(this.handleUpdate);
       };
 
       Connected.prototype.componentWillUnmount = function componentWillUnmount() {
