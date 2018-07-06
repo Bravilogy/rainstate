@@ -210,5 +210,5 @@ export default connect(generateProps)(App);
 
 **Note** - `generateProps` will receive the current state as a first argument and `dispatch` function as a second.
 
-### License
+## License
 MIT
