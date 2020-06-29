@@ -35,12 +35,12 @@ registerEvent('someEvent', someEvent);
 
 
 
-// 2. registerEvents is just a convenience function and the above can be written as
+// 2. registerEvents - just a convenience function and the above can be written as
 registerEvents({ someEvent });
 
 
 
-// 3. 
+// 3. registerStateEvent
 const someEvent = (state) => ({ message: 'hello world' });
 
 registerStateEvent('someEvent', someEvent);
