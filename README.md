@@ -186,6 +186,8 @@ registerStateEvent('showMessage', (state) => ({
   message: 'hello world',
 }));
 
+// somewhere in your entry file import the file above
+import './store';
 
 // App.js
 import { connect } from 'rainstate';
@@ -207,3 +209,6 @@ export default connect(generateProps)(App);
 ```
 
 **Note** - `generateProps` will receive the current state as a first argument and `dispatch` function as a second.
+
+## License
+MIT
