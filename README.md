@@ -1,4 +1,4 @@
-# Rainstate
+# Rainstate (experimental)
 Having worked on multiple `Clojure` applications using `reagent + re-frame` combination, I decided to create this tiny library to 'feel at home' when working on JavaScript applications.
 
 In my opinion, `Re-frame` is an amazing piece of software and I think JavaScript developers can learn a lot from it.
