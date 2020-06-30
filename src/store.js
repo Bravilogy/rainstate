@@ -7,7 +7,7 @@ const makeStateManager = () => {
     update: newValue => {
       state = newValue;
     },
-    getState: () => state,
+    getState: () => state
   };
 };
 
@@ -27,7 +27,9 @@ export const registerEvent = (type, handler) => {
   validateString(type);
 
   if (events[type]) {
-    console.warn(`An event '${type}' has already been registered, overwriting.`);
+    console.warn(
+      `An event '${type}' has already been registered, overwriting.`
+    );
   }
 
   events[type] = handler;
@@ -82,7 +84,7 @@ export const dispatch = (type, ...params) => {
   });
 };
 
-export const subscribe = (handler) => {
+export const subscribe = handler => {
   if (typeof handler !== 'function') {
     throw new Error('Subscription handler has to be a function.');
   }
@@ -95,7 +97,6 @@ export const subscribe = (handler) => {
 };
 
 export const getState = stateManager.getState;
-
 
 /* Handle string and array events */
 const dispatchEffect = event => {
@@ -115,12 +116,13 @@ const parseHandler = evt => {
   }
 
   if (!isArray(evt)) {
-    throw new Error('onSuccess and onFailure can only be either strings or arrays.');
+    throw new Error(
+      'onSuccess and onFailure can only be either strings or arrays.'
+    );
   }
 
   return evt;
 };
-
 
 /* ------------------------------
    Register a few default effects
@@ -145,20 +147,16 @@ registerEffect('dispatch', dispatchEffect);
 
 registerEffect('dispatchN', events => {
   if (!isArray(events)) {
-    throw new Error('dispatchN expects an array of events, where each event is either a String or an Array');
+    throw new Error(
+      'dispatchN expects an array of events, where each event is either a String or an Array'
+    );
   }
 
   events.filter(x => !!x).forEach(dispatchEffect);
 });
 
 registerEffect('http', config => {
-  const {
-    method = 'get',
-    onFailure,
-    onSuccess,
-    uri,
-    ...requestObj,
-  } = config;
+  const { method = 'get', onFailure, onSuccess, uri, ...requestObj } = config;
 
   const allowedMethods = ['get', 'post', 'delete', 'put', 'patch'];
 
@@ -176,7 +174,11 @@ registerEffect('http', config => {
   fetch(uri, { method, ...requestObj })
     .then(res => res.json())
     .then(response =>
-      successEvent ? dispatch(successEvent, ...successParams, response) : response)
+      successEvent
+        ? dispatch(successEvent, ...successParams, response)
+        : response
+    )
     .catch(err =>
-      failureEvent ? dispatch(failureEvent, ...failureParams, err) : err);
+      failureEvent ? dispatch(failureEvent, ...failureParams, err) : err
+    );
 });

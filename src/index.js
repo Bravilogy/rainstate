@@ -6,5 +6,5 @@ export {
   registerEvent,
   registerEvents,
   registerStateEvent,
-  subscribe,
+  subscribe
 } from './store';

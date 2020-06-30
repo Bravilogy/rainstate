@@ -7,7 +7,7 @@ Rainstate is a tiny library for managing side effects in JavaScript applications
 
 ## Install
 ```js
-yarn add https://github.com/Bravilogy/rainstate.git
+npm install --save @bravilogy/rainstate
 ```
 
 ## Effects
