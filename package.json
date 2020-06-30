@@ -1,6 +1,6 @@
 {
   "name": "@bravilogy/rainstate",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Re-frame way of handling effects in React apps",
   "main": "./dist/index.js",
   "repository": "github:bravilogy/rainstate",
@@ -42,7 +42,9 @@
     "react": "^16.4.1",
     "react-dom": "^16.4.1"
   },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "npmName": "rainstate",
   "npmFileMap": [
     {
