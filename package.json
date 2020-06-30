@@ -1,6 +1,6 @@
 {
   "name": "@bravilogy/rainstate",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Re-frame way of handling effects in React apps",
   "keywords": [
     "state",
