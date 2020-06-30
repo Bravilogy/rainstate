@@ -21,7 +21,7 @@ Because event handlers return simple objects, they are pure functions that recei
 Here is a basic usage of each of these functions:
 
 ```js
-import { registerEvent, registerEvents, registerStateEvent } from 'rainstate';
+import { registerEvent, registerEvents, registerStateEvent } from '@bravilogy/rainstate';
 
 // 1. registerEvent
 const someEvent = (state) => ({
@@ -64,7 +64,7 @@ Registers custom effects. Please note that `registerEffect` will overwrite alrea
 ## Simple example
 Here we're setting an initial state of our application.
 ```js
-import { subscribe, registerStateEvent, dispatch } from 'rainstate';
+import { subscribe, registerStateEvent, dispatch } from '@bravilogy/rainstate';
 
 subscribe(console.log);
 
@@ -78,7 +78,7 @@ dispatch('initializeApplication');
 ## Simple example with http call
 Rainstate comes with `http` effect which uses `fetch API`. If you would like to use any alternatives, you can overwrite it by registerring an effect yourself.
 ```js
-import { subscribe, registerEvents, dispatch } from 'rainstate';
+import { subscribe, registerEvents, dispatch } from '@bravilogy/rainstate';
 
 subscribe(console.log);
 
@@ -161,7 +161,7 @@ And finally, `dispatchN` must receive an array of events, where there can be fal
 
 ## Simple registerEffect example
 ```js
-import { dispatch, subscribe, registerEffect, registerEvent } from 'rainstate';
+import { dispatch, subscribe, registerEffect, registerEvent } from '@bravilogy/rainstate';
 
 subscribe(console.log);
 
@@ -180,7 +180,7 @@ dispatch('showAlert', 'hello world');
 ```js
 // store.js
 
-import { registerStateEvent } from 'rainstate';
+import { registerStateEvent } from '@bravilogy/rainstate';
 
 registerStateEvent('showMessage', (state) => ({
   message: 'hello world',
@@ -190,7 +190,7 @@ registerStateEvent('showMessage', (state) => ({
 import './store';
 
 // App.js
-import { connect } from 'rainstate';
+import { connect } from '@bravilogy/rainstate';
 import React from 'react';
 
 const App = ({ showMessage, message }) => (
